@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 
 class Test extends Command
@@ -38,17 +39,16 @@ class Test extends Command
      */
     public function handle()
     {
+        $start = date('Y-m-d H:i:s');
+        $this->info($start.'  开始获取数据!');
 
-        /*$sql = "SELECT itemid,sku,listingduration,country,
-                (CASE INSTR(sku,'@#') WHEN 0 THEN sku ELSE SUBSTR(sku,1,INSTR(sku,'@#') - 1) END) AS newSku
-                FROM ebay_item WHERE country='CN' AND sku IS NOT NULL
-                AND listingduration IN('GTC','Days_7','Days_30')";
+        //$exitCode = Artisan::call('db:seed');
 
-        $res = DB::connection('mysql')->select($sql);*/
+        //
+        $sql = "B_ModifyOnlineNumberOfSkuOnTheIbay365";
+        $num = DB::connection('sqlsrv')->select($sql);
+        $end = date('Y-m-d H:i:s');
+        $this->info($end."  获取SKU在线数量数据完毕，数据数量{$num[0]->number}条，详情请查看数据表ibay365_quantity_online");
 
-        $sql = "SELECT top 10 * FROM oa_goodsinfo";
-
-       $res = DB::connection('sqlsrv')->select($sql);
-        var_dump($res);exit;
     }
 }

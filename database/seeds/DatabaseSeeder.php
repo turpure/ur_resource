@@ -11,6 +11,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // $this->call(UsersTableSeeder::class);
+        $this->call(IbayTableSeeder::class);
+        $this->command->info('ibay365_ebay_listing数据表数据更新完毕!');
     }
 }
