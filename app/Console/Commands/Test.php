@@ -42,7 +42,7 @@ class Test extends Command
         $start = date('Y-m-d H:i:s');
         $this->info($start.'  开始获取数据!');
 
-        //$exitCode = Artisan::call('db:seed');
+        $exitCode = Artisan::call('db:seed');
 
         //
         $sql = "B_ModifyOnlineNumberOfSkuOnTheIbay365";
