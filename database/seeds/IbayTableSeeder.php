@@ -12,14 +12,19 @@ class IbayTableSeeder extends Seeder
 {
     public function run()
      {
-         //娓呯┖鏁版嵁琛╥bay365_ebay_listing
+         //清空数据表ibay365_ebay_listing
          DB::table('ibay365_ebay_listing')->truncate();
-         //鑾峰彇ibay365涓璭Bay listing
-         $step = 200;//姣忔鍙栧嚭鏁版嵁鏁伴噺
+         //获取ibay365中eBay listing
+         $step = 200;//每次取出数据数量
          for ($i=0; ;$i++){
              $listingSql = "SELECT e.itemid,e.sku AS code,er.sku AS sku,listingtype,country,initialnumber,
-                (CASE INSTR(er.sku,'@#') WHEN 0 THEN er.sku ELSE SUBSTR(er.sku,1,INSTR(er.sku,'@#') - 1) END) AS newSku
-                FROM ebay_item e 
+                (CASE 
+                    WHEN INSTR(er.sku,'*') > 0 THEN SUBSTR(er.sku,1,INSTR(er.sku,'*') - 1) 
+                    WHEN INSTR(er.sku,'@') > 0 THEN SUBSTR(er.sku,1,INSTR(er.sku,'@') - 1) 
+                    WHEN INSTR(er.sku,'#') > 0 THEN SUBSTR(er.sku,1,INSTR(er.sku,'#') - 1)
+                    ELSE er.sku
+                END) AS newSku
+                FROM ebay_item e  
                 LEFT JOIN ebay_fillquantity er ON er.itemid=e.itemid
                 WHERE country='CN' AND e.sku IS NOT NULL AND er.sku IS NOT NULL AND initialnumber<>0 
                 AND listingstatus = 'Active' 
@@ -29,7 +34,7 @@ class IbayTableSeeder extends Seeder
              if(!$listing){
                  break;
              }else{
-                 //鎻掑叆鏁版嵁琛ㄤ腑
+                 //插入数据表中
                  DB::table('ibay365_ebay_listing')->insert($listing);
              }
          }
