@@ -12,10 +12,10 @@ class IbayTableSeeder extends Seeder
 {
     public function run()
      {
-         //清空数据表ibay365_ebay_listing
+         //????????ibay365_ebay_listing
          DB::table('ibay365_ebay_listing')->truncate();
-         //获取ibay365中eBay listing
-         $step = 200;//每次取出数据数量
+         //???ibay365??eBay listing
+         $step = 200;//??????????????
          for ($i=0; ;$i++){
              $listingSql = "SELECT e.itemid,e.sku AS code,er.sku AS sku,listingtype,country,initialnumber,
                 (CASE 
@@ -26,7 +26,7 @@ class IbayTableSeeder extends Seeder
                 END) AS newSku
                 FROM ebay_item e  
                 LEFT JOIN ebay_fillquantity er ON er.itemid=e.itemid
-                WHERE country='CN' AND e.sku IS NOT NULL AND er.sku IS NOT NULL AND initialnumber<>0 
+                WHERE country='CN' AND e.sku IS NOT NULL AND er.sku IS NOT NULL 
                 AND listingstatus = 'Active' 
                 AND listingtype = 'FixedPriceItem' " . ' LIMIT ' . $step*$i . ',' . $step;
              $listing = DB::connection('mysql')->select($listingSql);
@@ -34,7 +34,7 @@ class IbayTableSeeder extends Seeder
              if(!$listing){
                  break;
              }else{
-                 //插入数据表中
+                 //???????????
                  DB::table('ibay365_ebay_listing')->insert($listing);
              }
          }

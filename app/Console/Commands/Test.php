@@ -40,7 +40,7 @@ class Test extends Command
     public function handle()
     {
         $start = date('Y-m-d H:i:s');
-        $this->info($start.'  开始获取数据!');
+        $this->info($start.'  Start getting data...');
 
         $exitCode = Artisan::call('db:seed');
 
@@ -48,7 +48,7 @@ class Test extends Command
         $sql = "B_ModifyOnlineNumberOfSkuOnTheIbay365";
         $num = DB::connection('sqlsrv')->select($sql);
         $end = date('Y-m-d H:i:s');
-        $this->info($end."  获取SKU在线数量数据完毕，数据数量{$num[0]->number}条，详情请查看数据表ibay365_quantity_online");
+        $this->info($end."  Getting the online number of SKU data is successful.The number of data is {$num[0]->number}.Look at the data table ibay365_quantity_online for details.");
 
     }
 }
