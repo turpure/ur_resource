@@ -11,6 +11,11 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'Site\SiteController@ebay');
+
+/*Route::get('site/ebay', function (){
+    return 123;
+});*/
+Route::get('site/ebay', 'Site\SiteController@ebay');
+Route::post('site/doEbay', 'Site\SiteController@doEbay');
+Route::get('site/wish', 'Site\SiteController@wish');

@@ -12,12 +12,12 @@ class IbayTableSeeder extends Seeder
 {
     public function run()
      {
-         //????????ibay365_ebay_listing
+         //清空数据表ibay365_ebay_listing
          DB::table('ibay365_ebay_listing')->truncate();
-         //???ibay365??eBay listing
-         $step = 200;//??????????????
+         //获取ibay365表中eBay listing
+         $step = 200;//获取数据量大小
          for ($i=0; ;$i++){
-             $listingSql = "SELECT e.itemid,e.sku AS code,er.sku AS sku,listingtype,country,initialnumber,
+             $listingSql = "SELECT e.itemid,e.sku AS code,er.sku AS sku,listingtype,country,onlinequantity AS initialnumber,
                 (CASE 
                     WHEN INSTR(er.sku,'*') > 0 THEN SUBSTR(er.sku,1,INSTR(er.sku,'*') - 1) 
                     WHEN INSTR(er.sku,'@') > 0 THEN SUBSTR(er.sku,1,INSTR(er.sku,'@') - 1) 
@@ -25,7 +25,7 @@ class IbayTableSeeder extends Seeder
                     ELSE er.sku
                 END) AS newSku
                 FROM ebay_item e  
-                LEFT JOIN ebay_fillquantity er ON er.itemid=e.itemid
+                LEFT JOIN ebay_item_variation_specifics er ON er.itemid=e.itemid
                 WHERE country='CN' AND e.sku IS NOT NULL AND er.sku IS NOT NULL 
                 AND listingstatus = 'Active' 
                 AND listingtype = 'FixedPriceItem' " . ' LIMIT ' . $step*$i . ',' . $step;
@@ -34,7 +34,7 @@ class IbayTableSeeder extends Seeder
              if(!$listing){
                  break;
              }else{
-                 //???????????
+                 //插入数据
                  DB::table('ibay365_ebay_listing')->insert($listing);
              }
          }
