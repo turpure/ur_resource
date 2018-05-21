@@ -40,8 +40,11 @@
 
         //按钮提交
         $('.submit').on('click', function () {
+            this.disabled=true;
+            var self = this;
+            //setTimeout(function(){self.disabled=false;},1000*30);
+            $('.msg').empty();
             var myDate = new Date();
-
             var year  = myDate.getFullYear(); //获取当前年
             var month = myDate.getMonth()+1;  //获取当前月
             var date  = myDate.getDate();     //获取当前日
@@ -50,11 +53,12 @@
             var s = myDate.getSeconds();
 
             var now=year+'-'+month+"-"+date+" "+h+':'+m+":"+s;
-            var str = now + 'Start getting data... <br> In the calculation, do not close the web page!'
+            var str = now + ' Start getting data... <br> In the calculation, do not close the web page!'
             $('.msg').html(str);
             $.post("{{ url('site/doEbay') }}",
                 {'_token': '{{ csrf_token() }}'}, function (data) {
                     $('.msg').append(data);
+                    self.disabled=false;
             });
         })
     }

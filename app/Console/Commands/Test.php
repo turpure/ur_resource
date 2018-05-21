@@ -42,7 +42,7 @@ class Test extends Command
         $start = date('Y-m-d H:i:s');
         $this->info($start.'  Start getting data...');
 
-        $exitCode = Artisan::call('db:seed');
+        $exitCode = Artisan::call('db:seed --class=IbayTableSeeder');
 
         //
         $sql = "B_ModifyOnlineNumberOfSkuOnTheIbay365";

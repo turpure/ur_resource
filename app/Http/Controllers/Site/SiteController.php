@@ -35,6 +35,14 @@ class SiteController extends Controller
     {
         return view('ebay');
     }
+    /**
+     * Wish页面
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function wish()
+    {
+        return view('wish');
+    }
 
     /**
      * 处理ebay数据
@@ -46,29 +54,49 @@ class SiteController extends Controller
         if($request->isMethod('post')){
             set_time_limit(0);//0表示不限时
             ini_set('memory_limit', '-1');
-            //$start = date('Y-m-d H:i:s') . '  Start getting data...';
             try{
-                Artisan::call('db:seed');
-
+                //Artisan::call('db:seed --class=IbayTableSeeder');//已加入定时任务，每日5点执行
                 $sql = "B_ModifyOnlineNumberOfSkuOnTheIbay365";
                 $num = DB::connection('sqlsrv')->select($sql);
                 $data = '<br>'.date('Y-m-d H:i:s') . "  Getting the online number of SKU data is successful.Look at the data table ibay365_quantity_online for details.";
 
             }catch (\Exception $e){
-                //var_dump($e);exit;
                 $data = $e->getMessage();
             }
             return $data;
-            if ($num){
+            /*if ($num){
                 return $data;
             }else{
                 return '程序错误，请联系管理员！';
-            }
+            }*/
         }
     }
-    public function wish()
+    /**
+     * 处理ebay数据
+     * @param Request $request
+     * @return string
+     */
+    public function doWish(Request $request)
     {
-        //var_dump(111);exit;
-        return view('wish');
+        if($request->isMethod('post')){
+            set_time_limit(0);//0表示不限时
+            ini_set('memory_limit', '-1');
+            try{
+                //Artisan::call('db:seed --class=WishTableSeeder');//已加入定时任务，每日5点执行
+                $sql = "B_wish_ModifyOnlineNumberOnTheIbay365";
+                $num = DB::connection('sqlsrv')->select($sql);
+                $data = '<br>'.date('Y-m-d H:i:s') . "  Getting the online number of SKU data is successful.Look at the data table ibay365_wish_quantity for details.";
+
+            }catch (\Exception $e){
+                $data = $e->getMessage();
+            }
+            return $data;
+            /*if ($num){
+                return $data;
+            }else{
+                return '程序错误，请联系管理员！';
+            }*/
+        }
     }
+
 }

@@ -8,6 +8,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 class WishTemp extends Command
 {
@@ -43,45 +44,15 @@ class WishTemp extends Command
     public function handle()
     {
         $start = date('Y-m-d H:i:s');
-        echo $start.' 开始获取数据';
-        //清空数据表ibay365_wish_listing
-        DB::table('guest.wish_itemid_skulist')->truncate();
-        //获取ibay365中Wish listing
-        $step = 100;//每次取出数据数量
-        //var_dump($step);exit;
-        for ($i=0; ;$i++){
-            /*$listingSql = "SELECT e.itemid,e.sku,er.sku AS subsku,er.inventory,
-                (CASE WHEN INSTR(er.sku,'*') <> 0 THEN SUBSTR(er.sku,1,INSTR(er.sku,'*') - 1) 
-				WHEN INSTR(er.sku,'#') <> 0 THEN SUBSTR(er.sku,1,INSTR(er.sku,'#') - 1) 
-				WHEN INSTR(er.sku,'@') <> 0 THEN SUBSTR(er.sku,1,INSTR(er.sku,'@') - 1) 
-				ELSE er.sku END) AS newSku
-                FROM wish_item e 
-                LEFT JOIN wish_item_variation_specifics er ON er.itemid=e.itemid
-                WHERE e.listingstatus='Active' AND e.sku IS NOT NULL AND er.sku IS NOT NULL " .
-                ' LIMIT ' . $step*$i . ',' . $step;*/
-            $listingSql = "SELECT * from wish_item_variation_specifics 
-                WHERE enabled='True' AND inventory>0 " .
-                ' LIMIT ' . $step*$i . ',' . $step;
-            $listing = DB::connection('mysql')->select($listingSql);
-            $listing = array_map('get_object_vars',$listing);
+        $this->info($start.'  Start getting data...');
 
-            //var_dump($listing);exit;
-            if(!$listing){
-                break;
-            }else{
-                //插入数据表中
-                DB::table('guest.wish_itemid_skulist')->insert($listing);
-            }
-        }
-        echo date('Y-m-d H:i:s').' 数据获取完毕';exit;
+        $exitCode = Artisan::call('db:seed --class=WishTableSeeder');
 
-        //获取要下架的商品的编码
-        /*$sql = "B_WishOffShelfOnTheIbay365";
-        $num = DB::connection('sqlsrv')->select($sql);
-        $end = date('Y-m-d H:i:s');
-        echo $end."  获取Wish平台下架产品数据完毕，数据数量{$num[0]->number}条，详情请查看数据表ibay365_wish_off_shelf";*/
-
-
+        //
+        //$sql = "B_ModifyOnlineNumberOfSkuOnTheIbay365";
+        //$num = DB::connection('sqlsrv')->select($sql);
+        //$end = date('Y-m-d H:i:s');
+        //$this->info($end."  Getting the online number of SKU data is successful.The number of data is {$num[0]->number}.Look at the data table ibay365_quantity_online for details.");
 
 
     }
