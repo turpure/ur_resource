@@ -55,7 +55,7 @@ class SiteController extends Controller
             set_time_limit(0);//0表示不限时
             ini_set('memory_limit', '-1');
             try{
-                //Artisan::call('db:seed --class=IbayTableSeeder');//已加入定时任务，每日5点执行
+                //Artisan::call('db:seed', ['--class' => 'IbayTableSeeder']);//已加入定时任务，每日5点执行
                 $sql = "B_ModifyOnlineNumberOfSkuOnTheIbay365";
                 $num = DB::connection('sqlsrv')->select($sql);
                 $data = '<br>'.date('Y-m-d H:i:s') . "  Getting the online number of SKU data is successful.Look at the data table ibay365_quantity_online for details.";
@@ -64,15 +64,10 @@ class SiteController extends Controller
                 $data = $e->getMessage();
             }
             return $data;
-            /*if ($num){
-                return $data;
-            }else{
-                return '程序错误，请联系管理员！';
-            }*/
         }
     }
     /**
-     * 处理ebay数据
+     * 处理Wish数据
      * @param Request $request
      * @return string
      */
@@ -82,7 +77,7 @@ class SiteController extends Controller
             set_time_limit(0);//0表示不限时
             ini_set('memory_limit', '-1');
             try{
-                //Artisan::call('db:seed --class=WishTableSeeder');//已加入定时任务，每日5点执行
+                //Artisan::call('db:seed', ['--class' => 'WishTableSeeder']);//已加入定时任务，每日2点执行
                 $sql = "B_wish_ModifyOnlineNumberOnTheIbay365";
                 $num = DB::connection('sqlsrv')->select($sql);
                 $data = '<br>'.date('Y-m-d H:i:s') . "  Getting the online number of SKU data is successful.Look at the data table ibay365_wish_quantity for details.";
@@ -91,11 +86,6 @@ class SiteController extends Controller
                 $data = $e->getMessage();
             }
             return $data;
-            /*if ($num){
-                return $data;
-            }else{
-                return '程序错误，请联系管理员！';
-            }*/
         }
     }
 

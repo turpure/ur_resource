@@ -42,13 +42,11 @@ class Test extends Command
         $start = date('Y-m-d H:i:s');
         $this->info($start.'  Start getting data...');
 
-        $exitCode = Artisan::call('db:seed --class=IbayTableSeeder');
-
+        Artisan::call('db:seed',['--class' => 'IbayTableSeeder']);
         //
         $sql = "B_ModifyOnlineNumberOfSkuOnTheIbay365";
         $num = DB::connection('sqlsrv')->select($sql);
         $end = date('Y-m-d H:i:s');
         $this->info($end."  Getting the online number of SKU data is successful.The number of data is {$num[0]->number}.Look at the data table ibay365_quantity_online for details.");
-
     }
 }
