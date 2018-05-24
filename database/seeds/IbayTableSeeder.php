@@ -16,7 +16,10 @@ class IbayTableSeeder extends Seeder
          DB::table('ibay365_ebay_listing')->truncate();
          //获取ibay365表中eBay listing
          $step = 200;//获取数据量大小
-         for ($i=0; ;$i++){
+         //获取数据表最大ID
+         $maxID = DB::connection('mysql')->table('ebay_item_variation_specifics')->max('id');
+         $max = ceil($maxID/$step);
+         for ($i=0;$i<=$max;$i++){
              $listingSql = "SELECT e.itemid,e.sku AS code,er.sku AS sku,listingtype,country,onlinequantity AS initialnumber,
                 (CASE 
                     WHEN INSTR(er.sku,'*') > 0 THEN SUBSTR(er.sku,1,INSTR(er.sku,'*') - 1) 
@@ -28,16 +31,15 @@ class IbayTableSeeder extends Seeder
                 LEFT JOIN ebay_item_variation_specifics er ON er.itemid=e.itemid
                 WHERE country='CN' AND e.sku IS NOT NULL AND er.sku IS NOT NULL 
                 AND listingstatus = 'Active' 
-                AND listingtype = 'FixedPriceItem' " . ' LIMIT ' . $step*$i . ',' . $step;
+                AND listingtype = 'FixedPriceItem' AND id BETWEEN " . ($step*$i+1) . ' AND ' . $step*($i+1);
              $listing = DB::connection('mysql')->select($listingSql);
              $listing = array_map('get_object_vars',$listing);
              if(!$listing){
-                 break;
+                 continue;
              }else{
                  //插入数据
                  DB::table('ibay365_ebay_listing')->insert($listing);
              }
          }
-
      }
 }

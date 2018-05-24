@@ -17,7 +17,10 @@ class WishTableSeeder extends Seeder
         DB::table('ibay365_wish_listing')->truncate();
         //获取ibay365表中eBay listing
         $step = 500;//获取数据量大小
-        for ($i=0; ;$i++){
+        //获取数据表最大ID
+        $maxID = DB::connection('mysql')->table('wish_item_variation_specifics')->max('id');
+        $max = ceil($maxID/$step);
+        for ($i=0;$i<=$max;$i++){
             $listingSql = "SELECT itemid,sku,inventory,
                 (CASE 
                     WHEN INSTR(sku,'*') > 0 THEN SUBSTR(sku,1,INSTR(sku,'*') - 1) 
@@ -26,11 +29,11 @@ class WishTableSeeder extends Seeder
                     ELSE sku
                 END) AS newSku
                 FROM wish_item_variation_specifics   
-                WHERE enabled='True' " . ' LIMIT ' . $step*$i . ',' . $step;
+                WHERE enabled='True' AND id BETWEEN " . ($step*$i + 1) . " AND " . $step*($i+1);
             $listing = DB::connection('mysql')->select($listingSql);
             $listing = array_map('get_object_vars',$listing);
             if(!$listing){
-                break;
+                continue;
             }else{
                 //插入数据
                 DB::table('ibay365_wish_listing')->insert($listing);
