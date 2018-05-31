@@ -42,7 +42,7 @@ class IbayTableSeeder extends Seeder
                      DB::table('ibay365_ebay_listing')->insert($listing);
                  }
              }
-             $msg = date('Y-m-d H:i:s')." 数据转移成功\r\n";
+             $msg = date('Y-m-d H:i:s')." Data migration successful\r\n";
          }catch (Exception $e){
              $msg = date('Y-m-d H:i:s').' '.$e->getMessage()."\r\n";
          }
