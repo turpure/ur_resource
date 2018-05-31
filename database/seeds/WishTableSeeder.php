@@ -20,8 +20,9 @@ class WishTableSeeder extends Seeder
         //获取数据表最大ID
         $maxID = DB::connection('mysql')->table('wish_item_variation_specifics')->max('id');
         $max = ceil($maxID/$step);
-        for ($i=0;$i<=$max;$i++){
-            $listingSql = "SELECT itemid,sku,inventory,
+        try{
+            for ($i=0;$i<=$max;$i++){
+                $listingSql = "SELECT itemid,sku,inventory,
                 (CASE 
                     WHEN INSTR(sku,'*') > 0 THEN SUBSTR(sku,1,INSTR(sku,'*') - 1) 
                     WHEN INSTR(sku,'@') > 0 THEN SUBSTR(sku,1,INSTR(sku,'@') - 1) 
@@ -30,15 +31,20 @@ class WishTableSeeder extends Seeder
                 END) AS newSku
                 FROM wish_item_variation_specifics   
                 WHERE enabled='True' AND id BETWEEN " . ($step*$i + 1) . " AND " . $step*($i+1);
-            $listing = DB::connection('mysql')->select($listingSql);
-            $listing = array_map('get_object_vars',$listing);
-            if(!$listing){
-                continue;
-            }else{
-                //插入数据
-                DB::table('ibay365_wish_listing')->insert($listing);
+                $listing = DB::connection('mysql')->select($listingSql);
+                $listing = array_map('get_object_vars',$listing);
+                if(!$listing){
+                    continue;
+                }else{
+                    //插入数据
+                    DB::table('ibay365_wish_listing')->insert($listing);
+                }
             }
+            $msg = date('Y-m-d H:i:s')." 数据转移成功\r\n";
+        }catch (Exception $e){
+            $msg = date('Y-m-d H:i:s').' '.$e->getMessage();
         }
+        echo $msg;
     }
 
 }
