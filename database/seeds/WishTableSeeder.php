@@ -40,9 +40,9 @@ class WishTableSeeder extends Seeder
                     DB::table('ibay365_wish_listing')->insert($listing);
                 }
             }
-            $msg = date('Y-m-d H:i:s')." Data migration successful\r\n";
+            $msg = date('Y-m-d H:i:s')." Wish SKU data migration successful\r\n";
         }catch (Exception $e){
-            $msg = date('Y-m-d H:i:s').' '.$e->getMessage();
+            $msg = date('Y-m-d H:i:s').' '.$e->getMessage()."\r\n";
         }
         echo $msg;
     }
