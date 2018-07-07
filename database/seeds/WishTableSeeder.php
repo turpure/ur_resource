@@ -32,7 +32,7 @@ class WishTableSeeder extends Seeder
                 FROM wish_item_variation_specifics v
                 INNER JOIN  wish_item w ON w.itemid=v.itemid
                 INNER JOIN  aliexpress_user a ON a.selleruserid=w.selleruserid
-                WHERE v.enabled='True' AND id BETWEEN " . ($step*$i + 1) . " AND " . $step*($i+1);
+                WHERE v.enabled='True' AND v.id BETWEEN " . ($step*$i + 1) . " AND " . $step*($i+1);
                 $listing = DB::connection('mysql')->select($listingSql);
                 $listing = array_map('get_object_vars',$listing);
                 if(!$listing){
