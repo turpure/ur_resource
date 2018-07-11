@@ -23,8 +23,9 @@ class GetWishSellerSeeder extends Seeder
         try{
             for ($i=0;$i<=$max;$i++){
                 $listingSql = "SELECT itemid,selleruserid
-                FROM wish_item  
-                WHERE id BETWEEN " . ($step*$i + 1) . " AND " . $step*($i+1);
+                FROM wish_item w
+                WHERE EXISTS (SELECT * FROM aliexpress_user WHERE aliexpress_user.selleruserid=w.selleruserid)
+                AND id BETWEEN " . ($step*$i + 1) . " AND " . $step*($i+1);
                 $listing = DB::connection('mysql')->select($listingSql);
                 $listing = array_map('get_object_vars',$listing);
                 if(!$listing){

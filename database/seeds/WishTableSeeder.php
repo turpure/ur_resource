@@ -22,17 +22,15 @@ class WishTableSeeder extends Seeder
         $max = ceil($maxID/$step);
         try{
             for ($i=0;$i<=$max;$i++){
-                $listingSql = "SELECT v.itemid,v.sku,v.inventory,
+                $listingSql = "SELECT itemid,sku,inventory,
                 (CASE 
-                    WHEN INSTR(v.sku,'*') > 0 THEN SUBSTR(v.sku,1,INSTR(v.sku,'*') - 1) 
-                    WHEN INSTR(v.sku,'@') > 0 THEN SUBSTR(v.sku,1,INSTR(v.sku,'@') - 1) 
-                    WHEN INSTR(v.sku,'#') > 0 THEN SUBSTR(v.sku,1,INSTR(v.sku,'#') - 1)
-                    ELSE v.sku
+                    WHEN INSTR(sku,'*') > 0 THEN SUBSTR(sku,1,INSTR(sku,'*') - 1) 
+                    WHEN INSTR(sku,'@') > 0 THEN SUBSTR(sku,1,INSTR(sku,'@') - 1) 
+                    WHEN INSTR(sku,'#') > 0 THEN SUBSTR(sku,1,INSTR(sku,'#') - 1)
+                    ELSE sku
                 END) AS newSku
-                FROM wish_item_variation_specifics v
-                INNER JOIN  wish_item w ON w.itemid=v.itemid
-                INNER JOIN  aliexpress_user a ON a.selleruserid=w.selleruserid
-                WHERE v.enabled='True' AND v.id BETWEEN " . ($step*$i + 1) . " AND " . $step*($i+1);
+                FROM wish_item_variation_specifics 
+                WHERE enabled='True' AND id BETWEEN " . ($step*$i + 1) . " AND " . $step*($i+1);
                 $listing = DB::connection('mysql')->select($listingSql);
                 $listing = array_map('get_object_vars',$listing);
                 if(!$listing){

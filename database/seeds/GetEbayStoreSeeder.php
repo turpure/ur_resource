@@ -37,6 +37,7 @@ class GetEbayStoreSeeder extends Seeder
                 LEFT JOIN ebay_item_variation_specifics er ON er.itemid=e.itemid
                 WHERE country='GB' AND location='London' AND e.sku IS NOT NULL AND er.sku IS NOT NULL 
                 AND listingstatus = 'Active' 
+                AND e.itemid <> '202123578166'
                 AND listingtype = 'FixedPriceItem' AND id BETWEEN " . ($step*$i+1) . ' AND ' . $step*($i+1);
                 $listing = DB::connection('mysql')->select($listingSql);
                 $listing = array_map('get_object_vars',$listing);
