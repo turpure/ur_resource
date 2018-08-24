@@ -27,7 +27,7 @@ class IbayTableSeeder extends Seeder
                     WHEN INSTR(er.sku,'@') > 0 THEN SUBSTR(er.sku,1,INSTR(er.sku,'@') - 1) 
                     WHEN INSTR(er.sku,'#') > 0 THEN SUBSTR(er.sku,1,INSTR(er.sku,'#') - 1)
                     ELSE er.sku
-                END) AS newSku
+                END) AS newSku,e.selleruserid
                 FROM ebay_item e  
                 LEFT JOIN ebay_item_variation_specifics er ON er.itemid=e.itemid
                 WHERE country='CN' AND e.sku IS NOT NULL AND er.sku IS NOT NULL 
