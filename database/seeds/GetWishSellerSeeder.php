@@ -25,6 +25,7 @@ class GetWishSellerSeeder extends Seeder
                 $listingSql = "SELECT itemid,selleruserid
                 FROM wish_item w
                 WHERE EXISTS (SELECT * FROM aliexpress_user WHERE aliexpress_user.selleruserid=w.selleruserid)
+                AND listingstatus = 'Active'
                 AND id BETWEEN " . ($step*$i + 1) . " AND " . $step*($i+1);
                 $listing = DB::connection('mysql')->select($listingSql);
                 $listing = array_map('get_object_vars',$listing);

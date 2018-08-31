@@ -29,7 +29,7 @@ class IbayTableSeeder extends Seeder
                     ELSE er.sku
                 END) AS newSku,e.selleruserid
                 FROM ebay_item e  
-                LEFT JOIN ebay_item_variation_specifics er ON er.itemid=e.itemid
+                INNER JOIN ebay_item_variation_specifics er ON er.itemid=e.itemid
                 WHERE country='CN' AND e.sku IS NOT NULL AND er.sku IS NOT NULL 
                 AND listingstatus = 'Active' 
                 AND listingtype = 'FixedPriceItem' AND id BETWEEN " . ($step*$i+1) . ' AND ' . $step*($i+1);
