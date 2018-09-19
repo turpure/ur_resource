@@ -30,7 +30,7 @@ class WishTableSeeder extends Seeder
                     ELSE sku
                 END) AS newSku,price
                 FROM wish_item_variation_specifics 
-                WHERE enabled='True' AND id BETWEEN " . ($step*$i + 1) . " AND " . $step*($i+1);
+                WHERE enabled<>'False' AND id BETWEEN " . ($step*$i + 1) . " AND " . $step*($i+1);
                 $listing = DB::connection('mysql')->select($listingSql);
                 $listing = array_map('get_object_vars',$listing);
                 if(!$listing){
