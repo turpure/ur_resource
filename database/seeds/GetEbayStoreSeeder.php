@@ -35,7 +35,11 @@ class GetEbayStoreSeeder extends Seeder
                 END) AS number
                 FROM ebay_item e  
                 LEFT JOIN ebay_item_variation_specifics er ON er.itemid=e.itemid
-                WHERE country='GB' AND location='London' AND e.sku IS NOT NULL AND er.sku IS NOT NULL 
+                WHERE selleruserid IN ('springyinee6','littlemay93','piandages','vesaxoun','yingerop','gundenzi','qianleihe9',
+                                'willyerxie08','vitalityang1','smartmilitary5','actinoliteye3','shuaiwsu-0','stairhaha2',
+                                'bookhaha3','simplecooller2','doublecoor2','coolskyna2','greengrassha0','cloudwhiteha0',
+                                'enjoyhappyha9','urnotchrisleer4')
+                AND e.sku IS NOT NULL AND er.sku IS NOT NULL 
                 AND listingstatus = 'Active' 
                 AND e.itemid NOT IN ('202123578166','162858075066','273227558403','232656400769') 
                 AND listingtype = 'FixedPriceItem' AND id BETWEEN " . ($step*$i+1) . ' AND ' . $step*($i+1);
