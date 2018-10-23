@@ -29,7 +29,8 @@ class GetEbayStoreSeeder extends Seeder
                     ELSE er.sku
                 END) AS newSku,
                 (CASE 
-                    WHEN INSTR(er.sku,'*') > 0 AND INSTR(er.sku,'@') > 0 THEN SUBSTR(SUBSTR(er.sku,1,INSTR(er.sku,'@')-1),INSTR(er.sku,'*')+1)
+                    WHEN INSTR(er.sku,'*') > 0 AND INSTR(er.sku,'@#') > 0 THEN SUBSTR(SUBSTR(er.sku,1,INSTR(er.sku,'@#')-1),INSTR(er.sku,'*')+1)
+                    WHEN INSTR(er.sku,'*') > 0 AND INSTR(er.sku,'#@') > 0 THEN SUBSTR(SUBSTR(er.sku,1,INSTR(er.sku,'#@')-1),INSTR(er.sku,'*')+1)
                     WHEN INSTR(er.sku,'*') > 0 AND INSTR(er.sku,'@') <= 0 THEN SUBSTR(er.sku,INSTR(er.sku,'*') + 1)
                     ELSE 1
                 END) AS number
