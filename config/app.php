@@ -1,5 +1,15 @@
 <?php
+use Monolog\Logger;
+use Monolog\Formatter\LineFormatter;
+use Monolog\Handler\StreamHandler;
 
+$app->configureMonologUsing(function($monolog) {
+    $output = "%datetime% > %level_name% > %message% %context% %extra%\n";
+    $stream = new StreamHandler('php://stdout', Logger::DEBUG);
+    $formatter = new LineFormatter($output);
+    $stream->setFormatter($formatter);
+    $monolog->pushHandler($stream);
+});
 return [
 
     /*
@@ -124,8 +134,10 @@ return [
     */
 
     'log' => env('APP_LOG', 'single'),
+    'log_max_files' => 3,
 
     'log_level' => env('APP_LOG_LEVEL', 'debug'),
+
 
     /*
     |--------------------------------------------------------------------------
@@ -231,3 +243,4 @@ return [
     ],
 
 ];
+

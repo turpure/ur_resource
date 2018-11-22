@@ -53,6 +53,20 @@ return [
             'strict' => true,
             'engine' => null,
         ],
+        'oauthoa' => [
+            'driver' => 'mysql',
+            'host' => env('DB_HOST_1', '127.0.0.1'),
+            'port' => env('DB_PORT_1', '3306'),
+            'database' => env('DB_DATABASE_1', 'forge'),
+            'username' => env('DB_USERNAME_1', 'forge'),
+            'password' => env('DB_PASSWORD_1', ''),
+            'unix_socket' => env('DB_SOCKET_1', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'strict' => true,
+            'engine' => null,
+        ],
 
         'pgsql' => [
             'driver' => 'pgsql',
