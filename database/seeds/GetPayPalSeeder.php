@@ -16,7 +16,7 @@ class GetPayPalSeeder extends Seeder
         $onlineSql = 'SELECT DISTINCT paypal FROM ebay_item where paypal is not null';
         $localSql = 'SELECT DISTINCT paypalName AS paypal FROM oa_paypal';
         try {
-            $onlinePayPalNames = DB::connection('mysql')->select($onlineSql);
+            $onlinePayPalNames = DB::connection('pgsql')->select($onlineSql);
             $localPayPalNames = DB::connection('sqlsrv')->select($localSql);
             $localPayPal = [];
             foreach ($localPayPalNames as $name) {
@@ -36,7 +36,7 @@ class GetPayPalSeeder extends Seeder
             if (!empty($exceptionPayPal)) {
                 foreach ($exceptionPayPal as $paypal) {
                     $itemSql = "select  itemid,paypal,selleruserid from ebay_item where paypal='$paypal' limit 100";
-                    $ret = DB::connection('mysql')->select($itemSql);
+                    $ret = DB::connection('pgsql')->select($itemSql);
                     foreach ($ret as $row) {
                         DB::connection('oauthoa')->insert($insertSql, [
                             $row->itemid, $row->paypal, $row->selleruserid, date('Y-m-d H:i:s')

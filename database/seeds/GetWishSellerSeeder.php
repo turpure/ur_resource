@@ -18,7 +18,7 @@ class GetWishSellerSeeder extends Seeder
         //获取ibay365表中eBay listing
         $step = 500;//获取数据量大小
         //获取数据表最大ID
-        $maxID = DB::connection('mysql')->table('wish_item')->max('id');
+        $maxID = DB::connection('pgsql')->table('wish_item')->max('id');
         $max = ceil($maxID/$step);
         try{
             for ($i=0;$i<=$max;$i++){
@@ -27,7 +27,7 @@ class GetWishSellerSeeder extends Seeder
                 WHERE EXISTS (SELECT * FROM aliexpress_user WHERE aliexpress_user.selleruserid=w.selleruserid)
                 AND listingstatus = 'Active'
                 AND id BETWEEN " . ($step*$i + 1) . " AND " . $step*($i+1);
-                $listing = DB::connection('mysql')->select($listingSql);
+                $listing = DB::connection('pgsql')->select($listingSql);
                 $listing = array_map('get_object_vars',$listing);
                 if(!$listing){
                     continue;

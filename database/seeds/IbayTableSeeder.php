@@ -17,15 +17,15 @@ class IbayTableSeeder extends Seeder
          //获取ibay365表中eBay listing
          $step = 200;//获取数据量大小
          //获取数据表最大ID
-         $maxID = DB::connection('mysql')->table('ebay_item_variation_specifics')->max('id');
+         $maxID = DB::connection('pgsql')->table('ebay_item_variation_specifics')->max('id');
          $max = ceil($maxID/$step);
          try{
              for ($i=0;$i<=$max;$i++){
                  $listingSql = "SELECT e.itemid,e.sku AS code,er.sku AS sku,listingtype,country,onlinequantity AS initialnumber,
                 (CASE 
-                    WHEN INSTR(er.sku,'*') > 0 THEN SUBSTR(er.sku,1,INSTR(er.sku,'*') - 1) 
-                    WHEN INSTR(er.sku,'@') > 0 THEN SUBSTR(er.sku,1,INSTR(er.sku,'@') - 1) 
-                    WHEN INSTR(er.sku,'#') > 0 THEN SUBSTR(er.sku,1,INSTR(er.sku,'#') - 1)
+                    WHEN strpos(er.sku,'*') > 0 THEN substring(er.sku,1,strpos(er.sku,'*') - 1) 
+                    WHEN strpos(er.sku,'@') > 0 THEN substring(er.sku,1,strpos(er.sku,'@') - 1) 
+                    WHEN strpos(er.sku,'#') > 0 THEN substring(er.sku,1,strpos(er.sku,'#') - 1)
                     ELSE er.sku
                 END) AS newSku,e.selleruserid
                 FROM ebay_item e  
@@ -33,7 +33,7 @@ class IbayTableSeeder extends Seeder
                 WHERE country='CN' AND e.sku IS NOT NULL AND er.sku IS NOT NULL 
                 AND listingstatus = 'Active' 
                 AND listingtype = 'FixedPriceItem' AND id BETWEEN " . ($step*$i+1) . ' AND ' . $step*($i+1);
-                 $listing = DB::connection('mysql')->select($listingSql);
+                 $listing = DB::connection('pgsql')->select($listingSql);
                  $listing = array_map('get_object_vars',$listing);
                  if(!$listing){
                      continue;
