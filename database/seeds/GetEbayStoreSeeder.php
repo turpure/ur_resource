@@ -32,7 +32,7 @@ class GetEbayStoreSeeder extends Seeder
                     WHEN strpos(er.sku,'*') > 0 AND strpos(er.sku,'@#') > 0 THEN substring(substring(er.sku,1,strpos(er.sku,'@#')-1),strpos(er.sku,'*')+1)
                     WHEN strpos(er.sku,'*') > 0 AND strpos(er.sku,'#@') > 0 THEN substring(substring(er.sku,1,strpos(er.sku,'#@')-1),strpos(er.sku,'*')+1)
                     WHEN strpos(er.sku,'*') > 0 AND strpos(er.sku,'@') <= 0 THEN substring(er.sku,strpos(er.sku,'*') + 1)
-                    ELSE 1
+                    ELSE 1::TEXT 
                 END) AS number
                 FROM ebay_item e  
                 LEFT JOIN ebay_item_variation_specifics er ON er.itemid=e.itemid
