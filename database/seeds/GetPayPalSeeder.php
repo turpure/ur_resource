@@ -35,7 +35,7 @@ class GetPayPalSeeder extends Seeder
                 ON DUPLICATE KEY UPDATE createdTime=values(createdtime)';
             if (!empty($exceptionPayPal)) {
                 foreach ($exceptionPayPal as $paypal) {
-                    $itemSql = "select  itemid,paypal,selleruserid from ebay_item where paypal='$paypal' limit 100";
+                    $itemSql = "select  itemid,paypal,selleruserid from ebay_item where paypal='$paypal'";
                     $ret = DB::connection('pgsql')->select($itemSql);
                     foreach ($ret as $row) {
                         DB::connection('oauthoa')->insert($insertSql, [
