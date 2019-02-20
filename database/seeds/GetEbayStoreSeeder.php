@@ -36,10 +36,11 @@ class GetEbayStoreSeeder extends Seeder
                 END) AS number
                 FROM ebay_item e  
                 LEFT JOIN ebay_item_variation_specifics er ON er.itemid=e.itemid
-                WHERE selleruserid IN ('springyinee6','littlemay93','piandages','vesaxoun','yingerop','gundenzi','qianleihe9',
-                                'willyerxie08','vitalityang1','smartmilitary5','actinoliteye3','shuaiwsu-0','stairhaha2',
-                                'bookhaha3','simplecooller2','doublecoor2','coolskyna2','greengrassha0','cloudwhiteha0',
-                                'enjoyhappyha9','urnotchrisleer4')
+                WHERE selleruserid IN ('actinoliteye3','aufhjsnn','bookhaha3','cherishfu5','cloudwhiteha0','coolskyna2',
+                'danheopk','doublecoor2','enjoyhappyha9','global_saler','greengrassha0','gundenzi','happyfebruaryha2',
+                'happyjanuary1','hezhilei9','leinvdyad','littlemay93','Mailingsa','njlapaa','okfqava','piandages','purityhand7',
+                'qianleihe9','sfsdfdaa','shuaiwsu-0','simplecooller2','smartmilitary5','springyinee6','stairhaha2','sunseeke6',
+                'uisehdn','urnotchrisleer4','vesaxoun','vitalityang1','willyerxie08','wooddiyy3','yingerop',)
                 AND e.sku IS NOT NULL AND er.sku IS NOT NULL 
                 AND listingstatus = 'Active' 
                 AND e.itemid NOT IN ('202123578166','162858075066','273227558403','232656400769') 
