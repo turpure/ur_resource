@@ -40,7 +40,7 @@ class GetEbayStoreSeeder extends Seeder
                 'danheopk','doublecoor2','enjoyhappyha9','global_saler','greengrassha0','gundenzi','happyfebruaryha2',
                 'happyjanuary1','hezhilei9','leinvdyad','littlemay93','Mailingsa','njlapaa','okfqava','piandages','purityhand7',
                 'qianleihe9','sfsdfdaa','shuaiwsu-0','simplecooller2','smartmilitary5','springyinee6','stairhaha2','sunseeke6',
-                'uisehdn','urnotchrisleer4','vesaxoun','vitalityang1','willyerxie08','wooddiyy3','yingerop',)
+                'uisehdn','urnotchrisleer4','vesaxoun','vitalityang1','willyerxie08','wooddiyy3','yingerop')
                 AND e.sku IS NOT NULL AND er.sku IS NOT NULL 
                 AND listingstatus = 'Active' 
                 AND e.itemid NOT IN ('202123578166','162858075066','273227558403','232656400769') 
