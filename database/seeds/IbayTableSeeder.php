@@ -21,7 +21,7 @@ class IbayTableSeeder extends Seeder
          $max = ceil($maxID/$step);
          try{
              for ($i=0;$i<=$max;$i++){
-                 $listingSql = "SELECT e.itemid,e.sku AS code,er.sku AS sku,listingtype,country,onlinequantity AS initialnumber,
+                 $listingSql = "SELECT e.itemid,e.sku AS code,er.sku AS sku,listingtype,e.country,onlinequantity AS initialnumber,
                 (CASE 
                     WHEN strpos(er.sku,'*') > 0 THEN substring(er.sku,1,strpos(er.sku,'*') - 1) 
                     WHEN strpos(er.sku,'@') > 0 THEN substring(er.sku,1,strpos(er.sku,'@') - 1) 
@@ -29,8 +29,9 @@ class IbayTableSeeder extends Seeder
                     ELSE er.sku
                 END) AS newSku,e.selleruserid
                 FROM ebay_item e  
+                INNER JOIN ebay_user eu ON eu.selleruserid=e.selleruserid AND eu.state1=1
                 INNER JOIN ebay_item_variation_specifics er ON er.itemid=e.itemid
-                WHERE country='CN' AND location='Shanghai' AND e.sku IS NOT NULL AND er.sku IS NOT NULL 
+                WHERE e.country='CN' AND location='Shanghai' AND e.sku IS NOT NULL AND er.sku IS NOT NULL 
                 AND listingstatus = 'Active' 
                 AND listingtype = 'FixedPriceItem' AND id BETWEEN " . ($step*$i+1) . ' AND ' . $step*($i+1);
                  $listing = DB::connection('pgsql')->select($listingSql);
