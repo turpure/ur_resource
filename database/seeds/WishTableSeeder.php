@@ -29,8 +29,9 @@ class WishTableSeeder extends Seeder
                     WHEN strpos(sku,'#') > 0 THEN substring(sku,1,strpos(sku,'#') - 1)
                     ELSE sku
                 END) AS newSku,price
-                FROM wish_item_variation_specifics 
-                WHERE enabled='True' AND id BETWEEN " . ($step*$i + 1) . " AND " . $step*($i+1);
+                FROM wish_item_variation_specifics wi
+                WHERE enabled='True' AND NOT EXISTS (SELECT * FROM wish_item w WHERE w.itemid=wi.itemid AND w.is_promoted = 1)
+                AND id BETWEEN " . ($step*$i + 1) . " AND " . $step*($i+1);
                 $listing = DB::connection('pgsql')->select($listingSql);
                 $listing = array_map('get_object_vars',$listing);
                 if(!$listing){
