@@ -13,7 +13,7 @@ class JoomTableSeeder extends Seeder
 {
     public function run()
     {
-        echo date('Y-m-d H:i:s') . " start get JOOM SKU Data \r\n";
+        //echo date('Y-m-d H:i:s') . " start get JOOM SKU Data \r\n";
         //清空数据表ibay365_ebay_listing
         DB::table('ibay365_joom_listing')->truncate();
         try {
@@ -33,7 +33,7 @@ class JoomTableSeeder extends Seeder
                         $list[] = get_object_vars($user);
                     }
                     DB::table('ibay365_joom_listing')->insert($list);
-                })->toArray();
+                });
 
             $msg = date('Y-m-d H:i:s') . " JOOM SKU Data migration successful\r\n";
         } catch (Exception $e) {
