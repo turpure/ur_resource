@@ -1,0 +1,75 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Administrator
+ * Date: 2018-04-03
+ * Time: 11:58
+ */
+
+use \Illuminate\Database\Seeder;
+use \Illuminate\Support\Facades\DB;
+
+class WishTableTwoSeeder extends Seeder
+{
+    public function run()
+    {
+        //清空数据表ibay365_ebay_listing
+        DB::table('ibay365_wish_listing_two')->truncate();
+        //获取ibay365表中eBay listing
+        $step = 400;//获取数据量大小
+
+        //获取数据表最大ID
+        //$maxID = DB::connection('pgsql')->table('aliexpress_items_variation_specifics')->max('id');
+        //$max = ceil($maxID/$step);
+        try{
+            /*for ($i=0;$i<=$max;$i++){
+                $listingSql = "SELECT itemid,sku,inventory,
+                (CASE 
+                    WHEN strpos(sku,'*') > 0 THEN substring(sku,1,strpos(sku,'*') - 1) 
+                    WHEN strpos(sku,'@') > 0 THEN substring(sku,1,strpos(sku,'@') - 1) 
+                    WHEN strpos(sku,'#') > 0 THEN substring(sku,1,strpos(sku,'#') - 1)
+                    ELSE sku
+                END) AS newSku  --,price
+                FROM wish_item_variation_specifics wi
+                WHERE enabled='True' -- AND inventory>0 
+                AND EXISTS (
+                    SELECT * FROM wish_item w 
+                    LEFT JOIN aliexpress_user u ON u.selleruserid=w.selleruserid 
+                    WHERE w.itemid=wi.itemid -- AND w.is_promoted = 0 
+                    AND listingstatus='Active' AND u.platform='wish' AND u.state1=1
+                ) AND id BETWEEN " . ($step*$i + 1) . " AND " . $step*($i+1);
+                $listing = DB::connection('pgsql')->select($listingSql);
+                $listing = array_map('get_object_vars',$listing);
+                if(!$listing){
+                    continue;
+                }else{
+                    //插入数据
+                    DB::table('ibay365_wish_listing_two')->insert($listing);
+                }
+            }*/
+
+            DB::connection('pgsql')->table(DB::raw('aliexpress_items_variation_specifics AS s'))
+                ->join('aliexpress_items', 'productid', '=', 'itemid')
+                ->join('aliexpress_user', 'aliexpress_user.selleruserid', '=', 'aliexpress_items.selleruserid')
+                ->select(DB::raw("itemid,aliexpress_items.selleruserid,s.sku,s.quantity AS inventory"))
+                ->where([
+                    ["platform", '=', 'aliexpress'],
+                    ['state1', '=', '1'],
+                ])
+                ->whereIn('aliexpress_items.listingstatus',['onSelling','auditing'])
+                ->orderBy('s.id')->chunk(400, function ($users) {
+                    if(!$users) return false;
+                    $list = [];
+                    foreach ($users as $user) {
+                        $list[] = get_object_vars($user);
+                    }
+                    DB::table('ibay365_wish_listing_two')->insert($list);
+                });
+            $msg = date('Y-m-d H:i:s')." Wish SKU data migration successful\r\n";
+        }catch (Exception $e){
+            $msg = date('Y-m-d H:i:s').' '.$e->getMessage()."\r\n";
+        }
+        echo $msg;
+    }
+
+}
