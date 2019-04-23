@@ -19,7 +19,7 @@ class GetEbayStoreSeeder extends Seeder
             DB::connection('pgsql')->table(DB::raw('ebay_item_variation_specifics AS v'))
                 ->join('ebay_item', 'ebay_item.itemid', '=', 'v.itemid')
                 ->join('ebay_user', 'ebay_user.selleruserid', '=', 'ebay_item.selleruserid')
-                ->select(DB::raw("v.itemid,ebay_item.selleruserid,ebay_item.sku as parentSKU,v.sku,v.onlinequantity AS inventory"))
+                ->select(DB::raw("v.itemid,ebay_item.selleruserid,ebay_item.sku as parentSKU,v.sku,v.onlinequantity AS inventory,now()::timestamp(0)without time zone AS updateDate"))
                 ->where([
                     ["ebay_item.country", '<>', 'CN'],
                     ['state1', '=', '1'],
