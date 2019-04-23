@@ -26,7 +26,7 @@ class GetEbayStoreSeeder extends Seeder
                     ['listingtype', '=', 'FixedPriceItem'],
                 ])
                 ->whereIn('ebay_item.listingstatus', ['Active'])
-                ->orderBy('v.id')->chunk(400, function ($users) {
+                ->orderBy('v.id')->chunk(300, function ($users) {
                     //print_r($users);exit;
                     if (!$users) return false;
                     $list = [];
