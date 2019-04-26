@@ -30,7 +30,7 @@ class WishTableSeeder extends Seeder
                     ELSE sku
                 END) AS newSku  --,price
                 FROM wish_item_variation_specifics wi
-                WHERE enabled='True' AND inventory>0 
+                WHERE enabled='True' AND inventory>=0 
                 AND EXISTS (
                     SELECT * FROM wish_item w 
                     LEFT JOIN aliexpress_user u ON u.selleruserid=w.selleruserid 
