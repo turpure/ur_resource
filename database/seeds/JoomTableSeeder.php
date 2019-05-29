@@ -26,7 +26,13 @@ class JoomTableSeeder extends Seeder
                     ELSE sku
                 END) AS newSku,price"))
                 ->where("enabled", '<>', 'False')
-                ->orderBy('id')->chunk(400, function ($users) {
+                ->whereExists(function ($query) {
+                    $query->select(DB::raw(1))
+                        ->from('joom_item')
+                        ->whereRaw('joom_item_variation_specifics.itemid = joom_item.itemid')
+                        ->where('joom_item.enabled','<>','False');
+                })->orderBy('id')->chunk(400, function ($users) {
+                    //print_r($users);exit;
                     if(!$users) return false;
                     $list = [];
                     foreach ($users as $user) {
