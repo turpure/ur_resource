@@ -21,7 +21,7 @@ class SmtTableSeeder extends Seeder
         $maxID = DB::connection('pgsql')->table('aliexpress_items_variation_specifics')->max('id');
         $max = ceil($maxID/$step);
         try{
-            for ($i=0;$i<=$max;$i++){
+            /*for ($i=0;$i<=$max;$i++){
                 $listingSql = "SELECT e.sku AS code,er.sku AS sku,
                 (CASE 
                     WHEN strpos(er.sku,'*') > 0 THEN substring(er.sku,1,strpos(er.sku,'*') - 1) 
@@ -41,7 +41,24 @@ class SmtTableSeeder extends Seeder
                     //插入数据
                     DB::table('ibay365_smt_listing')->insert($listing);
                 }
-            }
+            }*/
+            DB::connection('pgsql')->table(DB::raw('aliexpress_items_variation_specifics AS s'))
+                ->join('aliexpress_items', 'productid', '=', 'itemid')
+                ->join('aliexpress_user', 'aliexpress_user.selleruserid', '=', 'aliexpress_items.selleruserid')
+                ->select(DB::raw("itemid,aliexpress_items.selleruserid,s.sku,s.quantity"))
+                ->where([
+                    ["platform", '=', 'aliexpress'],
+                    ['state1', '=', '1'],
+                ])
+                ->whereIn('aliexpress_items.listingstatus',['onSelling','auditing'])
+                ->orderBy('s.id')->chunk(400, function ($users) {
+                    if(!$users) return false;
+                    $list = [];
+                    foreach ($users as $user) {
+                        $list[] = get_object_vars($user);
+                    }
+                    DB::table('ibay365_smt_listing')->insert($list);
+                });
             $msg = date('Y-m-d H:i:s')." SMT SKU data migration successful\r\n";
         }catch (Exception $e){
             $msg = date('Y-m-d H:i:s').' '.$e->getMessage()."\r\n";
