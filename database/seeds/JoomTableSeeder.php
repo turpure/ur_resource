@@ -16,7 +16,10 @@ class JoomTableSeeder extends Seeder
         //echo date('Y-m-d H:i:s') . " start get JOOM SKU Data \r\n";
         //清空数据表ibay365_ebay_listing
         DB::table('ibay365_joom_listing')->truncate();
-        $idArr = [1,2562000000,2563000000];
+
+        $maxID = DB::connection('pgsql')->table('joom_item_variation_specifics')->max('id');
+        $first = substr($maxID,0,4);
+        $idArr = [1, ($first-1)*1000000, $first*1000000];
         try {
             foreach ($idArr as $k => $v){
                 $query = DB::connection('pgsql')->table('joom_item_variation_specifics')
