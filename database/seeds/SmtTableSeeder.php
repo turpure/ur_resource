@@ -14,7 +14,8 @@ class SmtTableSeeder extends Seeder
     public function run()
     {
         //清空数据表ibay365_ebay_listing
-        DB::table('ibay365_smt_listing')->truncate();
+        DB::connection('sqlsrv')->table('ibay365_smt_listing')->truncate();
+        /*
         //获取ibay365表中eBay listing
         $step = 400;//获取数据量大小
         //获取数据表最大ID
@@ -39,14 +40,28 @@ class SmtTableSeeder extends Seeder
                 }else{
                     //var_dump($listing);exit;
                     //插入数据
-                    DB::table('ibay365_smt_listing')->insert($listing);
+                    DB::connection('sqlsrv')->table('ibay365_smt_listing')->insert($listing);
                 }
             }
-            $msg = date('Y-m-d H:i:s')." SMT SKU data migration successful\r\n";
+        */
+        try {
+            $sql = "select productid itemid, listingstatus,selleruserid, regexp_replace(split_part(sku,'_',1) ,'(0[1-9]{1}$)','','g' ) as sku  from aliexpress_items where listingstatus != 'offline'";
+            $listing = DB::connection('pgsql')->select($sql);
+            $listing = array_map('get_object_vars',$listing);
+            $number = count($listing);
+            $size = 500;
+            $step = ceil($number / $size);
+            $reminder = $number % $size ;
+            for ($i=0; $i< $step; $i++ ) {
+                $step = $i*$size < $number ? $size : $reminder -1;
+                $rows = array_slice($listing, $i* $size, $size);
+                DB::connection('sqlsrv')->table('ibay365_smt_listing')->insert($rows);
+                echo date('Y-m-d H:i:s')." SMT $i SKU data migration successful\r\n";
+            }
+
         }catch (Exception $e){
-            $msg = date('Y-m-d H:i:s').' '.$e->getMessage()."\r\n";
+            echo date('Y-m-d H:i:s').' '.$e->getMessage()."\r\n";
         }
-        echo $msg;
     }
 
 }
