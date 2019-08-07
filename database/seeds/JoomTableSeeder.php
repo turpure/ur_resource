@@ -15,44 +15,30 @@ class JoomTableSeeder extends Seeder
     {
         //echo date('Y-m-d H:i:s') . " start get JOOM SKU Data \r\n";
         //清空数据表ibay365_ebay_listing
-        DB::table('ibay365_joom_listing')->truncate();
-
-        $maxID = DB::connection('pgsql')->table('joom_item_variation_specifics')->max('id');
-        $first = substr($maxID,0,4);
-        $idArr = [1, ($first-1)*1000000, $first*1000000];
+        DB::connection('sqlsrv')->table('ibay365_joom_listing')->truncate();
+        $sql = "select  jv.itemid,jv.sku,jv.inventory,(CASE 
+                    WHEN strpos(jv.sku,'*') > 0 THEN substring(jv.sku,1,strpos(jv.sku,'*') - 1) 
+                    WHEN strpos(jv.sku,'@') > 0 THEN substring(jv.sku,1,strpos(jv.sku,'@') - 1) 
+                    WHEN strpos(jv.sku,'#') > 0 THEN substring(jv.sku,1,strpos(jv.sku,'#') - 1)
+                    ELSE jv.sku
+                END) AS newSku,jv.price  from joom_item as jt LEFT JOIN joom_item_variation_specifics as jv 
+                on jt.itemid = jv.itemid where jt.enabled='True' and jv.enabled='True' ";
         try {
-            foreach ($idArr as $k => $v){
-                $query = DB::connection('pgsql')->table('joom_item_variation_specifics')
-                    ->select(DB::raw("itemid,sku,inventory,(CASE 
-                    WHEN strpos(sku,'*') > 0 THEN substring(sku,1,strpos(sku,'*') - 1) 
-                    WHEN strpos(sku,'@') > 0 THEN substring(sku,1,strpos(sku,'@') - 1) 
-                    WHEN strpos(sku,'#') > 0 THEN substring(sku,1,strpos(sku,'#') - 1)
-                    ELSE sku
-                END) AS newSku,price"))
-                    ->where("enabled", 'True');
-                if($k == count($idArr) - 1){
-                    $query->where("id", '>', $v);
-                }else{
-                    $query->whereBetween("id", [$v, $idArr[$k + 1]]);
-                }
-                $query->whereExists(function ($query) {
-                        $query->select(DB::raw(1))
-                            ->from('joom_item')
-                            ->whereRaw('joom_item_variation_specifics.itemid = joom_item.itemid')
-                            ->where('joom_item.enabled','True');
-                    })->orderBy('id')->chunk(200, function ($users) {
-                        //print_r($users);exit;
-                        if(!$users) return false;
-                        $list = $users->map(function ($value) {return (array)$value;})->toArray();
-                        DB::table('ibay365_joom_listing')->insert($list);
-                    });
+            $listing = DB::connection('pgsql')->select($sql);
+            $listing = array_map('get_object_vars',$listing);
+            $number = count($listing);
+            $size = 100;
+            $step = ceil($number / $size);
+            $reminder = $number % $size ;
+            for ($i=0; $i< $step; $i++ ) {
+                $size = $i*$size < $number ? $size : $reminder -1;
+                $rows = array_slice($listing, $i* $size, $size);
+                DB::connection('sqlsrv')->table('ibay365_joom_listing')->insert($rows);
             }
-
-            $msg = date('Y-m-d H:i:s') . " JOOM SKU Data migration successful\r\n";
+            echo date('Y-m-d H:i:s')." Joom $i SKU data migration successful\r\n";
         } catch (Exception $e) {
-            $msg = date('Y-m-d H:i:s') . ' ' . $e->getMessage() . "\r\n";
+            echo date('Y-m-d H:i:s') . ' ' . $e->getMessage() . "\r\n";
         }
-        echo $msg;
     }
 
 

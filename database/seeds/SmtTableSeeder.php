@@ -53,12 +53,11 @@ class SmtTableSeeder extends Seeder
             $step = ceil($number / $size);
             $reminder = $number % $size ;
             for ($i=0; $i< $step; $i++ ) {
-                $step = $i*$size < $number ? $size : $reminder -1;
+                $size = $i*$size < $number ? $size : $reminder -1;
                 $rows = array_slice($listing, $i* $size, $size);
                 DB::connection('sqlsrv')->table('ibay365_smt_listing')->insert($rows);
                 echo date('Y-m-d H:i:s')." SMT $i SKU data migration successful\r\n";
             }
-            echo date('Y-m-d H:i:s')." SMT SKU data migration successful\r\n";
 
         }catch (Exception $e){
             echo date('Y-m-d H:i:s').' '.$e->getMessage()."\r\n";
