@@ -35,7 +35,7 @@ class JoomTableSeeder extends Seeder
                 $rows = array_slice($listing, $i* $size, $size);
                 DB::connection('sqlsrv')->table('ibay365_joom_listing')->insert($rows);
             }
-            echo date('Y-m-d H:i:s')." Joom $i SKU data migration successful\r\n";
+            echo date('Y-m-d H:i:s')." Joom  SKU data migration successful\r\n";
         } catch (Exception $e) {
             echo date('Y-m-d H:i:s') . ' ' . $e->getMessage() . "\r\n";
         }
