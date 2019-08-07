@@ -22,7 +22,7 @@ class SmtTableSeeder extends Seeder
         $maxID = DB::connection('pgsql')->table('aliexpress_items_variation_specifics')->max('id');
         $max = ceil($maxID/$step);
         try{
-            for ($i=0;$i<=$max;$i++){
+            /*for ($i=0;$i<=$max;$i++){
                 $listingSql = "SELECT e.sku AS code,er.sku AS sku,
                 (CASE 
                     WHEN strpos(er.sku,'*') > 0 THEN substring(er.sku,1,strpos(er.sku,'*') - 1) 
@@ -58,6 +58,7 @@ class SmtTableSeeder extends Seeder
                 DB::connection('sqlsrv')->table('ibay365_smt_listing')->insert($rows);
                 echo date('Y-m-d H:i:s')." SMT $i SKU data migration successful\r\n";
             }
+            echo date('Y-m-d H:i:s')." SMT SKU data migration successful\r\n";
 
         }catch (Exception $e){
             echo date('Y-m-d H:i:s').' '.$e->getMessage()."\r\n";

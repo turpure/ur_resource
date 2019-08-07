@@ -13,57 +13,46 @@ class JoomTableSeeder extends Seeder
 {
     public function run()
     {
+        //echo date('Y-m-d H:i:s') . " start get JOOM SKU Data \r\n";
         //清空数据表ibay365_ebay_listing
         DB::table('ibay365_joom_listing')->truncate();
 
+        $maxID = DB::connection('pgsql')->table('joom_item_variation_specifics')->max('id');
+        $first = substr($maxID,0,4);
+        $idArr = [1, ($first-1)*1000000, $first*1000000];
         try {
-            //插入2018年12月1日以前的数据
-            $maxId = DB::connection('pgsql')->table('joom_item_variation_specifics')->where("created", '<', strtotime('2018-12-01'))->max('id');
-            $list = $this->getData(1, $maxId);
-            if ($list) {
-                //插入数据
-                DB::table('ibay365_joom_listing')->insert($list);
-            }
-
-            //插入2018年12月1日以后的数据
-            $step = 400;//获取数据量大小
-            //获取数据表最大ID
-            $minId = DB::connection('pgsql')->table('joom_item_variation_specifics')->where("created", '>=', strtotime('2018-12-01'))->min('id');
-            $maxId = DB::connection('pgsql')->table('joom_item_variation_specifics')->where("created", '>=', strtotime('2018-12-01'))->max('id');
-            $count = ceil(($maxId - $minId - 1) / $step);
-
-            for ($i = 0; $i <= $count; $i++) {
-                $min = $i * $step + $minId;
-                $max = ($i + 1) * $step + $minId - 1;
-                $dataList = $this->getData($min, $max);
-               // print_r($dataList);exit;
-                if (!$dataList) {
-                    continue;
-                } else {
-                    //插入数据
-                    DB::table('ibay365_joom_listing')->insert($dataList);
+            foreach ($idArr as $k => $v){
+                $query = DB::connection('pgsql')->table('joom_item_variation_specifics')
+                    ->select(DB::raw("itemid,sku,inventory,(CASE 
+                    WHEN strpos(sku,'*') > 0 THEN substring(sku,1,strpos(sku,'*') - 1) 
+                    WHEN strpos(sku,'@') > 0 THEN substring(sku,1,strpos(sku,'@') - 1) 
+                    WHEN strpos(sku,'#') > 0 THEN substring(sku,1,strpos(sku,'#') - 1)
+                    ELSE sku
+                END) AS newSku,price"))
+                    ->where("enabled", 'True');
+                if($k == count($idArr) - 1){
+                    $query->where("id", '>', $v);
+                }else{
+                    $query->whereBetween("id", [$v, $idArr[$k + 1]]);
                 }
+                $query->whereExists(function ($query) {
+                        $query->select(DB::raw(1))
+                            ->from('joom_item')
+                            ->whereRaw('joom_item_variation_specifics.itemid = joom_item.itemid')
+                            ->where('joom_item.enabled','True');
+                    })->orderBy('id')->chunk(200, function ($users) {
+                        //print_r($users);exit;
+                        if(!$users) return false;
+                        $list = $users->map(function ($value) {return (array)$value;})->toArray();
+                        DB::table('ibay365_joom_listing')->insert($list);
+                    });
             }
+
             $msg = date('Y-m-d H:i:s') . " JOOM SKU Data migration successful\r\n";
         } catch (Exception $e) {
             $msg = date('Y-m-d H:i:s') . ' ' . $e->getMessage() . "\r\n";
         }
         echo $msg;
-    }
-
-    public function getData($min, $max)
-    {
-        $listingSql = "SELECT itemid,sku,inventory,
-                (CASE 
-                    WHEN strpos(sku,'*') > 0 THEN substring(sku,1,strpos(sku,'*') - 1) 
-                    WHEN strpos(sku,'@') > 0 THEN substring(sku,1,strpos(sku,'@') - 1) 
-                    WHEN strpos(sku,'#') > 0 THEN substring(sku,1,strpos(sku,'#') - 1)
-                    ELSE sku
-                END) AS newSku,price
-                FROM joom_item_variation_specifics 
-                WHERE enabled<>'False' AND id BETWEEN " . $min . " AND " . $max;
-        $listing = DB::connection('pgsql')->select($listingSql);
-        return array_map('get_object_vars', $listing);
     }
 
 
