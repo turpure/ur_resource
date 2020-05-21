@@ -21,7 +21,7 @@ class IbayTableSeeder extends Seeder
          $max = ceil($maxID/$step);
          try{
              for ($i=0;$i<=$max;$i++){
-                 $listingSql = "SELECT e.itemid,e.sku AS code,er.sku AS sku,listingtype,e.country,onlinequantity AS initialnumber,
+                 $listingSql = "SELECT e.siste, e.itemid,e.sku AS code,er.sku AS sku,listingtype,e.country,onlinequantity AS initialnumber,
                 (CASE 
                     WHEN strpos(er.sku,'*') > 0 THEN substring(er.sku,1,strpos(er.sku,'*') - 1) 
                     WHEN strpos(er.sku,'@') > 0 THEN substring(er.sku,1,strpos(er.sku,'@') - 1) 
